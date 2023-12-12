@@ -1,43 +1,34 @@
-import React from "react";
-import "./App.css";
-import { useDispatch, useSelector } from "react-redux";
-import { triggerIncrementRequest } from "./redux/actions/countAction";
+// src/App.js
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDataRequest } from './store/actions';
 
 const App = () => {
-  const countFromRedux = useSelector((state) => state.count);
   const dispatch = useDispatch();
-  const { number, loading } = countFromRedux;
+  const { data, loading, error } = useSelector((state) => state);
 
-  const handleIncrement = () => {
-    dispatch(triggerIncrementRequest());
-  };
+  useEffect(() => {
+    dispatch(fetchDataRequest());
+  }, [dispatch]);
 
-  const handleDecrement = () => {
-    alert("decrement functionality is pending yet");
-  };
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
-    <div style={styles.container} className="App">
-      <button style={styles.btn} onClick={handleIncrement}>
-        +
-      </button>
-      {loading ? <h1> ...</h1> : <h1 style={styles.m48}>{number}</h1>}
-      <button style={styles.btn} onClick={handleDecrement}>
-        -
-      </button>
+    <div>
+      <h1>Data:</h1>
+      <ul>
+        {data.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-  },
-  btn: { width: 48, height: 48, borderRadius: 24 },
-  m48: { margin: 48 },
 };
 
 export default App;
