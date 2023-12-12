@@ -1,32 +1,42 @@
 // src/App.js
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataRequest } from './store/actions';
+import { fetchUsersRequest } from './actions/userActions';
+import { fetchPostsRequest } from './actions/postActions';
 
 const App = () => {
   const dispatch = useDispatch();
-  const { data, loading, error } = useSelector((state) => state);
+  const { users, posts, userLoading, postLoading } = useSelector((state) => ({
+    users: state.users.users,
+    posts: state.posts.posts,
+    userLoading: state.users.loading,
+    postLoading: state.posts.loading,
+  }));
 
   useEffect(() => {
-    dispatch(fetchDataRequest());
+    dispatch(fetchUsersRequest());
+    dispatch(fetchPostsRequest());
   }, [dispatch]);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
 
   return (
     <div>
-      <h1>Data:</h1>
-      <ul>
-        {data.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
+      <h1>Users</h1>
+      {userLoading ? <p>Loading users...</p> : (
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      )}
+
+      <h1>Posts</h1>
+      {postLoading ? <p>Loading posts...</p> : (
+        <ul>
+          {posts.map((post) => (
+            <li key={post.id}>{post.title}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
